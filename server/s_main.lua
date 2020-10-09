@@ -10,7 +10,7 @@ AddEventHandler("rdr-bathing:canEnterBath", function(town)
             if currentMoney >= Globals.Price then
                 user.removeMoney(Globals.Price)
 
-                BathingSessions[p1] = _source
+                BathingSessions[town] = _source
                 TriggerClientEvent("rdr-bathing:StartBath", _source, town)
             else
                 print("NOTIFICATION HERE")
