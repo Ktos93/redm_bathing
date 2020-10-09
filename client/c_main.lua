@@ -38,8 +38,8 @@ GetClosestConsumer = function()
 	return nil
 end
 
---[[ Functions ]]--
-EnterBathing = function(town)
+RegisterNetEvent('rdr-bathing:StartBath')
+AddEventHandler('rdr-bathing:StartBath', function(town)
 	if Config.BathingZones[town] then
 		SetCurrentPedWeapon(PlayerPedId(), `WEAPON_UNARMED`, true, 0, true, true)
 
@@ -180,7 +180,7 @@ EnterBathing = function(town)
 			Citizen.Wait(10)
 		end
 	end
-end
+end)
 
 ExitBathing = function(animscene, town, cam)
 	if DoesEntityExist(BathingPed) then
@@ -223,10 +223,8 @@ ExitBathing = function(animscene, town, cam)
 	SetPedCanLegIk(PlayerPedId(), true)
 	SetPedLegIkMode(PlayerPedId(), 2)
 end
-
-EnterPremiumBath = function(animscene, town, cam)
-	--TriggerServerCallback("rdr-bathing:canBuyDeluxeBath", function(cb) // link own callback system
-		--if cb then 
+RegisterNetEvent('rdr-bathing:StartDeluxeBath')
+AddEventHandler('rdr-bathing:StartDeluxeBath', function(animscene, town, cam)
 			if not Citizen.InvokeNative(0x25557E324489393C, animscene) then return end
 			Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
 
@@ -258,11 +256,12 @@ EnterPremiumBath = function(animscene, town, cam)
 			TogglePrompts({ "STOP_BATHING", "SCRUB" }, true)
 
 			RenderScriptCams(true, true, 0, true, false, 0)
-		--else
-		--	TogglePrompts({ "REQUEST_DELUXE_BATHING" }, false)
-		--end
-	--end, town)
-end
+end)
+
+RegisterNetEvent('rdr-bathing:HideDeluxePrompt')
+AddEventHandler('rdr-bathing:HideDeluxePrompt', function()
+	TogglePrompts({ "REQUEST_DELUXE_BATHING" }, false)
+end)
 
 ExitPremiumBath = function(animscene, town, cam, disableScrub)
 	local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0,  "s_deluxe_outro", false, true)
@@ -385,9 +384,9 @@ Action = function(name, p1, p2, p3)
 	TogglePrompts("ALL", false)
 
 	if (name == "START_BATHING") then
-		--TriggerServerCallback("rdr-bathing:canEnterBath", function(cb) if cb then EnterBathing(p1) end end, p1) // link own callback system
+		TriggerServerEvent("rdr-bathing:canEnterBath", p2)
 	elseif (name == "REQUEST_DELUXE_BATHING") then
-		EnterPremiumBath(p1, p2, p3)
+		TriggerServerEvent("rdr-bathing:canEnterDeluxeBath", p1 , p2 , p3)
 	elseif (name == "STOP_BATHING") then
 		ExitBathing(p1, p2, p3)
 	end
