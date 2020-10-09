@@ -384,7 +384,7 @@ Action = function(name, p1, p2, p3)
 	TogglePrompts("ALL", false)
 
 	if (name == "START_BATHING") then
-		TriggerServerEvent("rdr-bathing:canEnterBath", p2)
+		TriggerServerEvent("rdr-bathing:canEnterBath", p1)
 	elseif (name == "REQUEST_DELUXE_BATHING") then
 		TriggerServerEvent("rdr-bathing:canEnterDeluxeBath", p1 , p2 , p3)
 	elseif (name == "STOP_BATHING") then
